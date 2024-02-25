@@ -44,12 +44,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                     <Text
                         style={{
                             fontFamily: Font["regular"],
-                            fontSize: FontSize.medium,
+                            fontSize: FontSize.large,
                             maxWidth: "80%",
                             textAlign: "center",
                         }}
                     >
-                        Create an account so you can explore all the existing jobs
+                        Change the world: Join us!
                     </Text>
                 </View>
 
