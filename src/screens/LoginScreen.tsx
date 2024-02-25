@@ -86,11 +86,11 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                             fontSize: FontSize.xLarge,
                         }}
                     >
-                        Sign in
+                        Sign up
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => navigate("Register")}
+                    onPress={() => navigate("Login")}
                     style={{
                         padding: Spacing,
                     }}
@@ -103,7 +103,7 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                             fontSize: FontSize.small,
                         }}
                     >
-                        Haven't joined yet?
+                        Already have an account
                     </Text>
                 </TouchableOpacity>
 

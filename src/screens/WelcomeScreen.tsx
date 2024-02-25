@@ -118,7 +118,29 @@ const WelcomeScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                         Register
                     </Text>
                 </TouchableOpacity>
+
             </View>
+
+            <TouchableOpacity
+                onPress={() => navigate("Home")}
+                style={{
+                    paddingVertical: Spacing * 1.5,
+                    paddingHorizontal: Spacing * 2,
+                    width: "48%",
+                    borderRadius: Spacing,
+                }}
+            >
+                <Text
+                    style={{
+                        fontFamily: Font["bold"],
+                        color: Colors.text,
+                        fontSize: FontSize.large,
+                        textAlign: "center",
+                    }}
+                >
+                    to Home
+                </Text>
+            </TouchableOpacity>
 
         </SafeAreaView>
     );
