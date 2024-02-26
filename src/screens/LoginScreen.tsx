@@ -1,14 +1,6 @@
-import {
-    ImageBackground,
-    Dimensions,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, SafeAreaView, Alert, ImageBackground, Dimensions } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Spacing from "../constants/Spacing";
 import FontSize from "../constants/FontsSize";
 import Colors from "../constants/Colors";
@@ -16,11 +8,40 @@ import Font from "../constants/Fonts";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import AppTextInput from "../components/TextInput";
+
 const { height } = Dimensions.get("window");
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleLogin = async () => {
+        try {
+            const userDataJSON = await AsyncStorage.getItem('userData');
+            // console.log(userDataJSON)
+
+            if (userDataJSON) {
+                const userData = JSON.parse(userDataJSON);
+
+                if (userData.email === email && userData.password === password) {
+                    userData.token = 'fake-token';
+                    await AsyncStorage.setItem('userData', JSON.stringify(userData));
+
+                    navigate('Home');
+                } else {
+                    Alert.alert('Error', 'Invalid email or password');
+                }
+            } else {
+                Alert.alert('Error', 'User data not found');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            Alert.alert('Error', 'Something went wrong. Please try again.');
+        }
+    };
+
     return (
         <SafeAreaView>
             <View style={{
@@ -60,8 +81,8 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                         marginVertical: Spacing * 3,
                     }}
                 >
-                    <AppTextInput placeholder="Email" />
-                    <AppTextInput placeholder="Password" />
+                    <AppTextInput placeholder="Email" value={email} onChangeText={setEmail} />
+                    <AppTextInput placeholder="Password" value={password} onChangeText={setPassword} />
                 </View>
                 <TouchableOpacity
                     style={{
@@ -77,6 +98,7 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                         shadowOpacity: 0.3,
                         shadowRadius: Spacing,
                     }}
+                    onPress={handleLogin}
                 >
                     <Text
                         style={{
@@ -86,11 +108,11 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                             fontSize: FontSize.xLarge,
                         }}
                     >
-                        Sign up
+                        Sign in
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => navigate("Login")}
+                    onPress={() => navigate("Register")}
                     style={{
                         padding: Spacing,
                     }}
@@ -103,7 +125,7 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                             fontSize: FontSize.small,
                         }}
                     >
-                        Already have an account
+                        Don't have a profile yet?
                     </Text>
                 </TouchableOpacity>
 
@@ -119,5 +141,3 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({});

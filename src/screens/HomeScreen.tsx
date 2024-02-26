@@ -6,19 +6,73 @@ import {
     Text,
     TouchableOpacity,
     View,
+    Alert
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Spacing from "../constants/Spacing";
 import FontSize from "../constants/FontsSize";
 import Colors from "../constants/Colors";
 import Font from "../constants/Fonts";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const { height } = Dimensions.get("window");
 
 type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 
+interface UserData {
+    name: string;
+    email: string;
+    password: string;
+    token: string;
+}
+
 const HomeScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
+    const [userName, setUserName] = useState<string | null>(null);
+    let [userData, setUserData] = useState<UserData>({
+        name: '',
+        email: '',
+        password: '',
+        token: ''
+    });
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const userDataJSON = await AsyncStorage.getItem('userData');
+                // console.log(userDataJSON)
+                if (userDataJSON) {
+                    userData = JSON.parse(userDataJSON);
+
+                    setUserName(userData.name);
+                }
+            } catch (error) {
+                console.error('Error receiving user data:', error);
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+
+    const handleLogout = async () => {
+
+        try {
+            const emptyTokenUserData = { ...userData, token: "" };
+            await AsyncStorage.setItem('userData', JSON.stringify(emptyTokenUserData));
+
+            navigate('Login');
+        } catch (error) {
+            console.error('Error on exiting:', error);
+            Alert.alert('Error', 'Something went wrong. Please try again.');
+        }
+    };
+
+
+
+
     return (
         <SafeAreaView>
             <View style={{
@@ -43,7 +97,7 @@ const HomeScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                         textAlign: "left",
                     }}
                 >
-                    You're in.
+                    You're in
                     <Text
                         style={{
                             fontFamily: Font["bold"],
@@ -53,7 +107,7 @@ const HomeScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                             textDecorationLine: 'underline',
                         }}
                     >
-                        Name
+                        {userName}
                     </Text>
                 </Text>
                 <Text
@@ -100,6 +154,7 @@ const HomeScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
                             fontSize: FontSize.large,
                             textAlign: "center",
                         }}
+                        onPress={handleLogout}
                     >
                         Log out
                     </Text>
