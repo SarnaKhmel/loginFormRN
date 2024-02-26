@@ -42,9 +42,9 @@ const HomeScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
             try {
                 const userDataJSON = await AsyncStorage.getItem('userData');
                 // console.log(userDataJSON)
+                if (userData.token != "fake-token") navigate('Login');
                 if (userDataJSON) {
                     userData = JSON.parse(userDataJSON);
-
                     setUserName(userData.name);
                 }
             } catch (error) {
